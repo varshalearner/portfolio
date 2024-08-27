@@ -31,7 +31,7 @@ const Hero = () => {
   ];
 
   return (
-    <div className="pb-20 pt-20 h-screen relative flex justify-center items-center">
+    <div className="pb-20 pt-20 h-screen relative flex justify-center items-center" id="home">
       <FloatingNav navItems={navItems} /> {/* Add FloatingNav here */}
       {/* Spotlight effect */}
       <div>

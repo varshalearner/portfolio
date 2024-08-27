@@ -82,6 +82,10 @@ export const FloatingNav = ({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
+          <div className="w-[4vw] flex absolute top-2">
+          <img src="vs-logo.png" alt="" />
+          <h2 className=" whitespace-nowrap flex items-center font-semibold italic text-xl ">Varsha Sharma</h2>
+        </div>
         {/* Desktop View */}
         <div className="hidden lg:flex items-center justify-center ">
   {navItems.map((navItem, idx) => (

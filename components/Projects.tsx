@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React, { useState } from "react";
 
 interface Project {
@@ -91,7 +92,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     <div className="flex flex-col bg-gradient-to-r my-10 from-blue-600/5 to-blue-300/5 hover:from-blue-600/20 hover:to-blue-300/20 md:w-[25vw] w-3/4 items-stretch rounded-lg shadow-lg transition-all duration-300 hover:bg-[#000319]/80 hover:shadow-2xl hover:scale-105">
       <a href={project.link} target="_blank" rel="noopener noreferrer">
         <div className="aspect-w-16 h-[24vh] md:h-[12vh] lg:h-[30vh]  p-4 ">
-          <img
+          <Image
             className="object-cover w-full  rounded-t-lg"
             src={project.image}
             alt={project.title}
@@ -119,9 +120,9 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
+            <Image
               className="w-[8vh]"
-              src="https://pluspng.com/img-png/github-logo-png-github-logos-and-usage-github-800x665.png"
+              src="https://pluspng.com/Image-png/github-logo-png-github-logos-and-usage-github-800x665.png"
               alt=""
             />
           </a>

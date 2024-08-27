@@ -1,5 +1,7 @@
-// ContactMe.tsx
 "use client";
+// ContactMe.tsx
+import Image from 'next/image';
+
 import React, { useState } from "react";
 import MagicButton from "./MagicButton";
 
@@ -28,7 +30,7 @@ const ContactMe: React.FC = () => {
       <div className="container h-full mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 px-4">
         {/* Image Section */}
         <div className="lg:w-1/4 flex justify-center">
-          <img
+          <Image
             src="smartphone.png"
             alt="Get in Touch"
             className="h-[70vh] object-cover rounded-lg shadow-lg"

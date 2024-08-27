@@ -1,6 +1,6 @@
 // import Grid from "@/components/Grid";
 import AboutMe from "@/components/About";
-import ContactMe from "@/components/contactUs";
+import ContactMe from "@/components/ContactUs";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
 

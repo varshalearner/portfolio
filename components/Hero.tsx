@@ -3,12 +3,13 @@
 import * as React from "react";
 import { FaHome, FaUser, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
 
-import { TextGenerateEffect } from "./ui/text-generate-effect";
+// import { TextGenerateEffect } from "./ui/text-generate-effect";
 import MagicButton from "./MagicButton";
 import { Spotlight } from "./ui/spotlight";
 import { FloatingNav } from "./floating-navbar";
 import ThemeToggleButton from "./ThemeToggleButton";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 const Hero = () => {
   const { theme } = useTheme(); // Access the current theme
@@ -76,7 +77,7 @@ const Hero = () => {
             Hi! I&apos;m <span className="font-bold dark:text-blue-200 text-blue-900 text-xl md:text-2xl lg:text-3xl">Varsha Sharma</span>, a Web Developer with a passion for
             creating dynamic applications.
           </p>
-          <img src="/robot.png" className="w-[40vw] md:w-[30vw] lg:w-[12vw]" alt="Programmer" />
+          <Image src="/robot.png" className="w-[40vw] md:w-[30vw] lg:w-[12vw]" alt="Programmer" />
 
           <a href="#portfolio">
             <MagicButton

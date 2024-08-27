@@ -1,5 +1,7 @@
-// AboutMe.tsx
 "use client";
+// AboutMe.tsx
+import Image from 'next/image';
+
 import React from "react";
 
 const AboutMe: React.FC = () => {
@@ -57,7 +59,7 @@ const AboutMe: React.FC = () => {
 
           {/* Image Section */}
           <div className="lg:w-[30vw] border-4 flex border-black rounded-full border-spacing-10 bg-blue-800 justify-center">
-            <img
+            <Image
               src="profile.png" // Ensure the image is placed in the public folder or adjust the path accordingly
               alt="Profile Picture of Varsha Sharma"
               className="shadow-lg object-cover"

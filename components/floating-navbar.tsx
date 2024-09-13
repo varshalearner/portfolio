@@ -85,7 +85,7 @@ export const FloatingNav = ({
         onMouseLeave={() => setHovered(false)}
       >
           <div className="w-[4vw] flex absolute top-2">
-          <Image src="vs-logo.png" alt="" />
+          <Image src="/vs-logo.png" alt="" />
           <h2 className=" whitespace-nowrap flex items-center font-semibold italic text-xl ">Varsha Sharma</h2>
         </div>
         {/* Desktop View */}

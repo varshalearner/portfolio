@@ -31,7 +31,7 @@ const ContactMe: React.FC = () => {
         {/* Image Section */}
         <div className="lg:w-1/4 flex justify-center">
           <Image
-            src="smartphone.png"
+            src="/smartphone.png"
             alt="Get in Touch"
             className="h-[70vh] object-cover rounded-lg shadow-lg"
           />

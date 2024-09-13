@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import emailjs from 'emailjs-com'; // Import emailjs
 import Image from 'next/image';

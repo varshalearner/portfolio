@@ -77,7 +77,7 @@ const Hero = () => {
             Hi! I&apos;m <span className="font-bold dark:text-blue-200 text-blue-900 text-xl md:text-2xl lg:text-3xl">Varsha Sharma</span>, a Web Developer with a passion for
             creating dynamic applications.
           </p>
-          <Image src="/robot.png" className="w-[40vw] md:w-[30vw] lg:w-[12vw]" alt="Programmer" />
+          <Image src="/robot.png" height={100} width={100} className="w-[40vw] md:w-[30vw] lg:w-[12vw]" alt="Programmer" />
 
           <a href="#portfolio">
             <MagicButton

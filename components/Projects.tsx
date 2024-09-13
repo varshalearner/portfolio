@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useState } from "react";
 
 interface Project {
@@ -16,7 +15,7 @@ const projectList: Project[] = [
     description:
       "An advanced online food ordering platform with animated UI, admin panel, and personalized recommendations.",
     stack: ["MERN Stack", "Tailwind CSS"],
-    link: "https://github.com/yourusername/online-food-ordering",
+    link: "https://github.com/varshalearner/Smart-Restaurant",
     image: "smart-restaurant-project.png",
   },
   {
@@ -24,7 +23,7 @@ const projectList: Project[] = [
     description:
       "A platform leveraging machine learning models to predict lung cancer risk, featuring a robust backend API.",
     stack: ["MERN Stack", "Python"],
-    link: "https://github.com/yourusername/lung-cancer-analysis",
+    link: "https://github.com/varshalearner/lungCancerAnalysis",
     image: "lung-cancer-analysis-project.png",
   },
   {
@@ -32,7 +31,7 @@ const projectList: Project[] = [
     description:
       "A video calling platform with real-time communication using WebRTC and a clean UI.",
     stack: ["MERN Stack", "Socket.IO", "WebRTC", "Tailwind CSS"],
-    link: "https://github.com/yourusername/sightcall",
+    link: "https://github.com/varshalearner/sight-call-frontend",
     image: "khudka-project.png",
   },
 
@@ -41,7 +40,7 @@ const projectList: Project[] = [
     description:
       "A responsive and visually appealing personal portfolio showcasing projects, skills, and contact information, built with Next.js and TypeScript.",
     stack: ["Next.js", "TypeScript", "Tailwind CSS"],
-    link: "https://github.com/yourusername/portfolio-project",
+    link: "https://varshalearner.vercel.app",
     image: "portfolio-project.png",
   },
   {
@@ -49,7 +48,7 @@ const projectList: Project[] = [
     description:
       "A Netflix-inspired platform that allows users to browse and stream movies and TV shows with a sleek and responsive UI.",
     stack: ["MERN Stack"],
-    link: "https://github.com/yourusername/netflix-clone",
+    link: "https://varshalearner.github.io/Netflix-Clone/",
     image: "netflix-project.png",
   },
   {
@@ -57,7 +56,7 @@ const projectList: Project[] = [
     description:
       "A classic Snake game built with HTML, CSS, and JavaScript. Navigate the snake to eat food and grow while avoiding the game boundaries.",
     stack: ["HTML", "CSS", "JavaScript"],
-    link: "https://github.com/yourusername/snake-game",
+    link: "https://github.com/varshalearner/snake-game",
     image: "snake-game-project.png",
   },
   {
@@ -65,7 +64,7 @@ const projectList: Project[] = [
     description:
       "A movie search website using a public API. Users can search for movies, view details, and explore movie information.",
     stack: ["HTML", "CSS", "JavaScript"],
-    link: "https://github.com/yourusername/movies-search-website",
+    link: "https://varshalearner.github.io/Search-Movies/",
     image: "movies-search.png",
   },
   {
@@ -73,7 +72,7 @@ const projectList: Project[] = [
     description:
       "An e-commerce platform built with EJS and Tailwind CSS. Allows users to browse products, read reviews, and manage their cart.",
     stack: ["EJS", "Tailwind CSS", "Express", "MongoDB"],
-    link: "https://github.com/yourusername/e-dukaan",
+    link: "https://github.com/varshalearner/E-Dukaan",
     image: "e-dukaan-project.png",
   },
 
@@ -82,17 +81,17 @@ const projectList: Project[] = [
     description:
       "A price comparison tool for gems and jewelry using React for the frontend and Python for web scraping. Compares prices across various websites.",
     stack: ["React", "Tailwind CSS", "Python", "Web Scraping"],
-    link: "https://github.com/yourusername/gem-portal",
+    link: "https://github.com/varshalearner/GeM-Price-Comparison",
     image: "gem-portal.png",
   },
 ];
 
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   return (
-    <div className="flex flex-col bg-gradient-to-r my-10 from-blue-600/5 to-blue-300/5 hover:from-blue-600/20 hover:to-blue-300/20 md:w-[25vw] w-3/4 items-stretch rounded-lg shadow-lg transition-all duration-300 hover:bg-[#000319]/80 hover:shadow-2xl hover:scale-105">
+    <div className="flex flex-col bg-gradient-to-r my-10 from-blue-600/15 to-blue-300/15 hover:dark::from-blue-600/30 hover:dark::to-blue-300/30 md:w-[25vw] w-3/4 items-stretch rounded-lg shadow-lg transition-all duration-300 hover:dark::bg-[#000319]/80 hover:dark::shadow-2xl hover:dark::scale-105">
       <a href={project.link} target="_blank" rel="noopener noreferrer">
         <div className="aspect-w-16 h-[24vh] md:h-[12vh] lg:h-[30vh]  p-4 ">
-          <Image
+          <img
             className="object-cover w-full  rounded-t-lg"
             src={project.image}
             alt={project.title}
@@ -101,14 +100,14 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
       </a>
       <div className="px-4 pb-2 flex flex-col  justify-stretch items-stretch">
         <a href={project.link} target="_blank" rel="noopener noreferrer">
-          <h3 className="text-xl font-bold text-white mb-2 hover:underline">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 hover:underline">
             {project.title}
           </h3>
         </a>
-        <p className="  text-white mb-4">{project.description}</p>
+        <p className="  text-gray-600 dark:text-white mb-4">{project.description}</p>
         <div className="flex flex-wrap gap-2 mb-2 ">
           {project.stack.map((tech, i) => (
-            <span key={i} className="text-xs text-white">
+            <span key={i} className="text-xs text-gray-600 dark:text-white">
               {tech}
             </span>
           ))}
@@ -116,13 +115,13 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         <div>
           <a
             href={project.link}
-            className="bg-blue-400/50"
+            className="bg-blue-400/150"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
+            <img
               className="w-[8vh]"
-              src="https://pluspng.com/Image-png/github-logo-png-github-logos-and-usage-github-800x665.png"
+              src="https://pluspng.com/img-png/github-logo-png-github-logos-and-usage-github-800x665.png"
               alt=""
             />
           </a>
@@ -146,13 +145,13 @@ const ProjectList: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[100vh] justify-center item-center" >
+    <div className=" flex flex-col h-[100vh] justify-center item-center " >
      
       <div className="text-center px-4 ">
-        <h2 className="text-3xl lg:text-4xl font-bold pt-16 text-cyan-200 mb-4">
+        <h2 className="text-3xl lg:text-4xl font-bold pt-16 dark:text-cyan-200 mb-4">
           My Projects
         </h2>
-        <p className=" text-[3vw]  md:text-base lg:px-32 text-justify text-gray-300 leading-relaxed ">
+        <p className=" text-[3vw]  md:text-base lg:px-32 text-justify dark:text-gray-300 leading-relaxed ">
           These projects showcase my technical skills and experience through
           real-world applications. Each project includes a brief description and
           links to the code repository and live demo. They demonstrate my

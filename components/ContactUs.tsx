@@ -1,14 +1,14 @@
 "use client";
-import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import emailjs from 'emailjs-com'; // Import emailjs
-import MagicButton from "./MagicButton";
+import Image from 'next/image';
+import MagicButton from './MagicButton';
 
 const ContactMe: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
+    name: '',
+    email: '',
+    message: '',
   });
   const [status, setStatus] = useState<string | null>(null);
 
@@ -19,15 +19,16 @@ const ContactMe: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    emailjs.sendForm('service_g6ecd5q', 'template_ypje005', e.currentTarget, 'svI8ufEPuFRdylpXU')
+    emailjs.sendForm('service_g6ecd5q', 'template_ypje005', e.currentTarget as HTMLFormElement, 'svI8ufEPuFRdylpXU')
       .then((result) => {
         console.log(result.text);
         setStatus('Message sent successfully!');
         setFormData({ name: '', email: '', message: '' });
-      }, (error) => {
+      })
+      .catch((error) => {
         console.log(error.text);
         setStatus('Failed to send message.');
       });

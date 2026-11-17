@@ -45,6 +45,9 @@ create trigger posts_set_updated_at
 -- (secret) key, which bypasses row level security.
 alter table public.posts enable row level security;
 revoke all on table public.posts from anon, authenticated;
+-- The secret key acts as service_role. Grant it explicitly: newer projects can be
+-- set to not expose new tables to the API automatically.
+grant select, insert, update, delete on table public.posts to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Images used in posts (covers and inline images)
@@ -56,3 +59,6 @@ on conflict (id) do update
   set public = excluded.public,
       file_size_limit = excluded.file_size_limit,
       allowed_mime_types = excluded.allowed_mime_types;
+
+-- Let the API see the new table right away.
+notify pgrst, 'reload schema';

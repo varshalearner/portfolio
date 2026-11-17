@@ -1,0 +1,91 @@
+---
+title: "Testing Login Flows: What to Check in OIDC, SAML, JWT and mTLS"
+description: "A tester's checklist of negative and security tests for the most common authentication flows."
+date: "2026-12-04"
+tags: ["security-testing", "authentication", "jwt", "oidc", "mtls"]
+draft: true
+---
+
+## Why login flows need extra attention
+
+If login breaks, nobody can use the product. If login is weak, the wrong people can. I spent a large part of my work writing negative and security tests for authentication, around 200 of them, and these are the checks I come back to.
+
+## JWT: the token itself
+
+| Test | Expected |
+|---|---|
+| Expired token (`exp` in the past) | 401 |
+| Signature tampered or signed with the wrong key | 401 |
+| Wrong `aud` (token meant for another API) | 401 |
+| Wrong `iss` (token from another issuer) | 401 |
+| Required claim missing | 401 |
+| `alg` set to `none` | 401 |
+
+You can generate these bad tokens yourself with PyJWT:
+
+```python
+import time
+import jwt  # pip install pyjwt
+
+SECRET = "test-secret"
+
+
+def make_token(secret=SECRET, **overrides):
+    payload = {
+        "sub": "user-1",
+        "aud": "my-api",
+        "iss": "https://auth.example.com",
+        "exp": int(time.time()) + 300,
+    }
+    payload.update(overrides)
+    return jwt.encode(payload, secret, algorithm="HS256")
+
+
+expired = make_token(exp=int(time.time()) - 60)
+wrong_audience = make_token(aud="other-api")
+wrong_key = make_token(secret="not-the-real-secret")
+```
+
+Send each one to a protected endpoint and assert a 401.
+
+## OIDC: the login redirect flow
+
+- `redirect_uri` not registered for the client → rejected
+- `state` value changed between request and callback → rejected
+- Authorization code used twice → second use rejected
+- Wrong client secret when exchanging the code → rejected
+
+## SAML: the assertion
+
+- Unsigned or wrongly signed assertion → rejected
+- Expired assertion → rejected
+- Assertion meant for a different service (wrong audience) → rejected
+- Same assertion replayed → rejected
+
+## mTLS: the client certificate
+
+- No client certificate → connection refused
+- Expired certificate → refused
+- Certificate signed by an untrusted CA → refused
+
+```python
+import pytest
+import requests
+
+URL = "https://api.example.com/health"
+
+
+def test_mtls_with_valid_cert():
+    r = requests.get(URL, cert=("client.crt", "client.key"), verify="ca.crt", timeout=10)
+    assert r.status_code == 200
+
+
+def test_mtls_without_cert_is_refused():
+    with pytest.raises(requests.exceptions.SSLError):
+        requests.get(URL, verify="ca.crt", timeout=10)
+```
+
+## What I learned
+
+- **Test the "no" paths more than the "yes" path.** The happy path gets tested by every user; the rejection paths only get tested by you.
+- **Check the error response too.** It should say "unauthorized" without revealing why in detail, such as which claim failed.

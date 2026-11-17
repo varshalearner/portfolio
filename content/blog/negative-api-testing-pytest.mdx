@@ -1,0 +1,68 @@
+---
+title: "Negative API Testing: The Tests Most Suites Miss"
+description: "A practical checklist of negative tests for REST APIs, with pytest examples you can run today."
+date: "2026-11-19"
+tags: ["api-testing", "pytest", "negative-testing", "python"]
+draft: false
+---
+
+## Why negative tests matter
+
+Most API suites check that the right request returns the right answer. Real users, broken clients and attackers send the wrong requests. Negative tests check that the API fails safely and clearly.
+
+I've written around 200 negative and security tests for authentication APIs, and these are the categories I always cover.
+
+## The checklist
+
+| Category | What to send | What you expect |
+|---|---|---|
+| Authentication | No token, expired token, tampered token | 401 |
+| Authorization | Valid token without permission | 403 |
+| Missing resource | ID that doesn't exist or was deleted | 404 |
+| Input validation | Missing fields, wrong types, empty strings, very long strings | 400 or 422 |
+| Wrong method | `DELETE` on a read-only endpoint | 405 |
+| Wrong content type | Form data where JSON is expected | 415 or 400 |
+| Boundaries | 0, -1, max int, dates in the past | A clear 4xx, never a 500 |
+
+**Golden rule:** bad input should never return a 500. A 500 means the server crashed instead of rejecting the request, and that is a bug.
+
+## Examples with pytest
+
+These use the public practice API [Restful Booker](https://restful-booker.herokuapp.com).
+
+```python
+import pytest
+import requests
+
+BASE = "https://restful-booker.herokuapp.com"
+
+
+def test_get_missing_booking_returns_404():
+    response = requests.get(f"{BASE}/booking/999999999", timeout=10)
+    assert response.status_code == 404
+
+
+def test_update_without_token_is_rejected():
+    response = requests.put(f"{BASE}/booking/1", json={"firstname": "Test"}, timeout=10)
+    assert response.status_code in (401, 403)
+
+
+@pytest.mark.parametrize("payload", [
+    {},                                   # empty body
+    {"firstname": "A"},                   # missing required fields
+    {"firstname": 123, "lastname": None}, # wrong types
+])
+def test_create_booking_with_bad_payload_is_rejected(payload):
+    response = requests.post(f"{BASE}/booking", json=payload, timeout=10)
+    assert 400 <= response.status_code < 500, (
+        f"Expected a 4xx, got {response.status_code}"
+    )
+```
+
+Run the last test and you may see it fail with a 500. That isn't a broken test: it's exactly the kind of bug negative tests exist to catch.
+
+## Tips
+
+- **Use `parametrize`.** One test function can cover dozens of bad inputs.
+- **Assert the error body too.** A good API tells the client what was wrong without leaking stack traces or internal details.
+- **Name tests by behavior,** like `test_update_without_token_is_rejected`. When it fails, the name tells you what broke.

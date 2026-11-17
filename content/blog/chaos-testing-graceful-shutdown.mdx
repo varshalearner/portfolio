@@ -1,0 +1,68 @@
+---
+title: "What a Pod-Kill Chaos Test Taught Me About Graceful Shutdown"
+description: "Killing a Kubernetes pod during load exposed failed in-flight requests, and the fix was graceful shutdown."
+date: "2026-11-20"
+tags: ["chaos-engineering", "kubernetes", "chaos-mesh", "resiliency"]
+draft: false
+---
+
+## The question
+
+In Kubernetes, pods get killed all the time: deployments, scaling, node issues. A service is supposed to handle that without users noticing. I wanted to check whether ours really did.
+
+## The experiment
+
+I used [Chaos Mesh](https://chaos-mesh.org) to kill one pod of a service while a steady load test was running against it.
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: pod-kill-demo
+  namespace: chaos-testing
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - demo-app
+    labelSelectors:
+      app: orders-api
+```
+
+The setup:
+
+1. Start a steady load test (I used k6).
+2. Apply the pod-kill experiment.
+3. Watch the error rate and the logs while Kubernetes replaces the pod.
+
+## What happened
+
+Kubernetes started a new pod as expected. But at the moment the old pod was killed, **the API calls it was handling failed**. Clients got errors for requests that were already in progress.
+
+The cause: the service didn't shut down gracefully. When it received the stop signal, it exited immediately instead of finishing the work it had already accepted.
+
+## The fix
+
+I raised the defect with the logs and the error-rate data, and the developers added graceful shutdown. On the application side, that means: when the stop signal (SIGTERM) arrives, stop accepting new requests, finish the in-flight ones, then exit.
+
+Kubernetes settings help too:
+
+```yaml
+spec:
+  terminationGracePeriodSeconds: 30
+  containers:
+    - name: orders-api
+      lifecycle:
+        preStop:
+          exec:
+            command: ["sh", "-c", "sleep 5"]
+```
+
+The short `preStop` sleep gives the load balancer time to stop sending new traffic before the app begins shutting down.
+
+## What I learned
+
+- **"Kubernetes will restart it" is not resiliency.** Restarting the pod doesn't save the requests that were in flight.
+- **Always run chaos under load.** With no traffic, this pod kill would have looked perfectly safe.
+- **Testers find and prove; developers fix.** My job was to reproduce the failure clearly and hand over evidence that made the fix obvious.

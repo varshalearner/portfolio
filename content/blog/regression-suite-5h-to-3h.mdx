@@ -1,0 +1,78 @@
+---
+title: "How I Cut a 3,000-Test Regression Suite from 5 Hours to 3"
+description: "Shared setup, parallel runs, and a cleanup step that went from 12 minutes to 30 seconds."
+date: "2026-11-18"
+tags: ["test-optimization", "rest-assured", "parallel-testing", "ai-in-qa"]
+draft: false
+---
+
+## The problem
+
+Our API regression suite had about 3,000 tests and took around 5 hours to run. Regression was triggered whenever a developer needed a new build validated, so 5 hours meant a developer waited most of a working day for an answer.
+
+When a suite is that slow, people start skipping it. That is when bugs slip into releases.
+
+## Where the time was going
+
+Two things stood out:
+
+- **Repeated setup.** Many tests created the same expensive test data again and again, even when they only read it.
+- **Slow cleanup.** Deleting everything the tests created took about 12 minutes, because resources were deleted one by one.
+
+Neither was a single big bug. It was hundreds of small inefficiencies spread across the suite.
+
+## Step 1: Fix one test class by hand
+
+I didn't try to fix 3,000 tests at once. I picked one test class and optimized it manually until it was fast and still reliable. That gave me a working example and, more importantly, a list of what I had actually changed.
+
+## Step 2: Turn the fixes into rules
+
+From that one class I wrote down a set of rules, for example:
+
+- Create shared, read-only setup data once per class, not once per test.
+- Keep tests independent so they can safely run in parallel.
+- Give every created resource a unique name so parallel tests never collide.
+- Never let a test depend on the order in which other tests run.
+
+## Step 3: Apply the rules with AI
+
+Applying these rules by hand across thousands of tests would have taken weeks. So I turned the rules into a Claude command that reviewed a test class and applied the same changes. Every change was still reviewed before merging.
+
+The whole QA team of 8 used the command, and we applied it across most of the suite.
+
+## Fixing the cleanup: 12 minutes to 30 seconds
+
+Cleanup was slow because it deleted resources one at a time. The new approach:
+
+1. Use an admin account to fetch everything the test run created.
+2. Delete resources as the user who created them, so permission checks still pass.
+3. Delete in dependency order: children before parents.
+4. Run deletes in parallel, in small batches of 4, so we don't overload the service.
+
+Here's the batching idea in Java:
+
+```java
+ExecutorService pool = Executors.newFixedThreadPool(4);
+for (List<Resource> level : resourcesByDependencyLevel) { // children first
+    List<Future<?>> futures = new ArrayList<>();
+    for (Resource r : level) {
+        futures.add(pool.submit(() -> deleteAsOwner(r)));
+    }
+    for (Future<?> f : futures) {
+        f.get(); // finish this level before deleting the parents
+    }
+}
+pool.shutdown();
+```
+
+## The result
+
+- Full regression: **5 hours → 3 hours**
+- Cleanup: **~12 minutes → ~30 seconds**
+- The rules and the command were adopted by the whole team
+
+## What I learned
+
+- **Measure before you optimize.** Most of the time was in setup and cleanup, not in the tests themselves.
+- **Do it once by hand first.** A manual fix gives you rules you understand and can defend.
+- **AI is great at applying rules you already trust.** It is risky when you ask it to invent the rules.

@@ -1,0 +1,79 @@
+---
+title: "Smoke vs Regression: Running Tests in a CI/CD Pipeline"
+description: "Which tests run on every merge, which run on demand, and how testing fits into a release."
+date: "2026-12-25"
+tags: ["ci-cd", "github-actions", "jenkins", "test-strategy"]
+draft: true
+---
+
+## Two suites, two jobs
+
+Running every test on every merge sounds safe, but it makes feedback so slow that people stop waiting for it. So we split tests by purpose:
+
+| | Smoke | Regression |
+|---|---|---|
+| Size | Small (e.g. 20 tests) | Large (thousands of tests) |
+| Time | Minutes | Hours |
+| Runs | Automatically on every merge | On demand, to validate a build before it moves forward |
+| Question it answers | "Is this build broken?" | "Did anything we already had stop working?" |
+
+## How it fit into a release
+
+1. Smoke runs on every merge.
+2. Regression is triggered when a build needs validating.
+3. Testing happens on a lower environment first, then a higher one.
+4. SRE runs their own checks.
+5. Release.
+
+When a test failed, QA raised the defect and debugged it with logs, and developers made the code fix. I supported 4 releases and 2 hotfixes this way.
+
+## Example: smoke on every push (GitHub Actions)
+
+```yaml
+name: smoke
+on: [push]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest -m smoke -n auto
+```
+
+`-n auto` comes from `pytest-xdist` and runs tests in parallel across CPU cores.
+
+## Example: regression on demand
+
+```yaml
+name: regression
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Build to validate"
+        required: true
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest -n auto
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+```
+
+## What I learned
+
+- **Smoke must stay fast.** If it creeps past 10 minutes, move tests out of it.
+- **A flaky test is worse than no test.** People learn to ignore red builds, and then they ignore real failures too.
+- **Make regression easy to trigger.** One button and one input make it far more likely to actually be run.

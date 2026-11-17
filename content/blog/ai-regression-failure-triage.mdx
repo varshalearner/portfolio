@@ -1,0 +1,58 @@
+---
+title: "Using AI to Triage Regression Failures"
+description: "How I built a local tool that collects logs, finds the likely cause of a failed test with Claude, and raises a Jira bug."
+date: "2026-12-18"
+tags: ["ai-in-qa", "python", "jira", "test-automation"]
+draft: true
+---
+
+## The problem
+
+When a regression run fails, the slow part isn't seeing the red test. It's figuring out why: opening Jenkins, finding the right service logs in Kubernetes, checking recent code changes, and then writing a bug report. For a handful of failures, that can take hours.
+
+## What I built
+
+A Python tool that runs locally and does the first round of investigation automatically:
+
+1. **Collect:** fetch failed tests from Jenkins, the matching Kubernetes logs, and the relevant code from locally cloned repos.
+2. **Map:** use mapping files that link each test class to the services and repositories it touches.
+3. **Analyze:** send that focused context to Claude to suggest the likely cause.
+4. **Report:** show results on an HTML dashboard and create a Jira bug with the logs attached.
+
+## Reducing wrong answers
+
+The biggest risk with AI is a confident wrong answer. What helped most was **giving it less, but more relevant, context**. The mapping files meant the model only saw the logs and code connected to that specific test, instead of guessing across everything.
+
+## Creating the Jira bug
+
+I wrote the Jira client myself. Creating an issue through Jira's REST API looks like this:
+
+```python
+import requests
+
+
+def create_bug(base_url, auth, project_key, summary, description):
+    payload = {
+        "fields": {
+            "project": {"key": project_key},
+            "summary": summary,
+            "description": description,
+            "issuetype": {"name": "Bug"},
+        }
+    }
+    response = requests.post(
+        f"{base_url}/rest/api/2/issue", json=payload, auth=auth, timeout=30
+    )
+    response.raise_for_status()
+    return response.json()["key"]
+```
+
+## How it spread
+
+I showed two other QA teams how to run it locally. They found it useful, and later the development team took it over and deployed it with their own improvements.
+
+## What I learned
+
+- **AI is a fast first investigator, not the final judge.** A person still confirms the cause before acting on it.
+- **Context beats clever prompts.** The right logs and the right code mattered more than prompt wording.
+- **Check your company's rules first.** Logs can contain sensitive data; make sure sending them to an AI API is allowed, and strip secrets before you do.

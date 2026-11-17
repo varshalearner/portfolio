@@ -1,0 +1,190 @@
+{
+  "site": {
+    "name": "Varsha Sharma",
+    "title": "SDET · QA Automation Engineer",
+    "url": "https://varshalearner.vercel.app",
+    "email": "varshalearner@gmail.com",
+    "linkedin": "https://linkedin.com/in/varshalearner",
+    "github": "https://github.com/varshalearner",
+    "resume": "/resume.pdf"
+  },
+  "nav": ["About", "Experience", "Impact", "Skills", "Projects", "Blog", "Contact"],
+  "hero": {
+    "label": "SDET · QA Automation Engineer",
+    "name": "Varsha Sharma",
+    "tagline": "I build API, performance and resiliency test automation for cloud microservices.",
+    "terminal": {
+      "command": "$ pytest tests/ -n auto",
+      "output": "3000 passed in 3h (was 5h)"
+    },
+    "status": "Open to SDET roles · Immediate joiner · NCR / Remote",
+    "stats": [
+      { "value": "5h → 3h", "label": "3,000-test regression suite" },
+      { "value": "~190", "label": "Tests built from scratch" },
+      { "value": "~200", "label": "Auth & security tests" },
+      { "value": "6", "label": "Spot Awards in ~1 year" }
+    ],
+    "buttons": [
+      { "label": "View My Work", "href": "#impact", "variant": "secondary" },
+      { "label": "Download Resume", "href": "/resume.pdf", "variant": "primary" }
+    ]
+  },
+  "about": {
+    "heading": "About Me",
+    "paragraphs": [
+      "I'm an SDET with about 1.5 years of experience at FICO, testing enterprise SaaS microservices running on Kubernetes. I specialise in API automation, performance and resiliency testing, and identity/security testing.",
+      "I like making testing faster and smarter. I built a complete test suite from scratch, cut a 3,000-test regression suite from 5 hours to 3, and built an AI-powered regression analyzer that our dev team later adopted. That work earned me 6 Spot Awards in about a year.",
+      "I'm looking for SDET roles where I can own quality and reliability for a product."
+    ],
+    "photo": "/profile.png",
+    "facts": [
+      { "label": "Experience", "value": "~1.5 years at FICO" },
+      { "label": "Spot Awards", "value": "6" },
+      { "label": "Releases supported", "value": "4 releases + 2 hotfixes" },
+      { "label": "Location", "value": "NCR / Remote, India" },
+      { "label": "Education", "value": "[DEGREE, COLLEGE, YEAR]" }
+    ]
+  },
+  "experience": [
+    {
+      "role": "Software Quality Assurance Associate Engineer",
+      "company": "FICO",
+      "location": "Bengaluru",
+      "period": "Jul 2025 – Oct 2026",
+      "points": [
+        "Built the DMP Metering test suite from scratch: ~190 tests across 5 microservices covering functional, performance, 72-hour longevity and resiliency testing (pytest, k6, Chaos Mesh).",
+        "Cut the DMP Core regression suite (~3,000 tests) from 5 hours to 3 using shared resources and parallel execution; reduced test cleanup from ~12 minutes to ~30 seconds.",
+        "Wrote ~200 negative and security tests for authentication flows: OIDC, SAML, JWT and mTLS.",
+        "Built an AI-powered regression analyzer that finds likely failure causes from Jenkins, Kubernetes logs and code, and auto-creates Jira defects with logs; later adopted and deployed by the dev team.",
+        "Supported 4 releases and 2 hotfixes; received 6 Spot Awards."
+      ]
+    },
+    {
+      "role": "Software Quality Assurance Intern",
+      "company": "FICO",
+      "location": "Bengaluru",
+      "period": "Jan 2025 – Jun 2025",
+      "points": [
+        "Created a Jenkins job to run DMP Core smoke tests.",
+        "Documented test cases in qTest so new team members could understand the suite."
+      ]
+    }
+  ],
+  "impact": {
+    "heading": "Impact at FICO",
+    "subheading": "Selected work. Code is proprietary, so each card shows the problem, approach and result.",
+    "cards": [
+      {
+        "title": "Regression suite: 5h → 3h",
+        "problem": "A ~3,000-test regression suite took 5 hours, slowing every release validation.",
+        "approach": "Optimized one test class by hand, wrote rules from it, then built a Claude command to apply them across the suite. Added shared resources, parallel runs, and parallel cleanup in dependency order.",
+        "result": "Runtime 5h → 3h, cleanup ~12 min → ~30 sec. The command was used by all 8 people on the team.",
+        "tags": ["Rest Assured", "Java", "Parallel execution", "Claude"]
+      },
+      {
+        "title": "Test suite built from scratch",
+        "problem": "The new Metering platform (5 microservices) had no automated tests.",
+        "approach": "Designed the framework and wrote functional, performance (1-hour), longevity (72-hour) and chaos tests, plus a 20-test smoke suite for every merge.",
+        "result": "~190 tests; smoke suite runs in ~5 minutes in CI.",
+        "tags": ["pytest", "k6", "Chaos Mesh", "Kubernetes", "Athena"]
+      },
+      {
+        "title": "AI regression analyzer",
+        "problem": "Debugging regression failures across logs, repos and Jenkins took hours.",
+        "approach": "Python clients for Jenkins, Kubernetes logs, code repos and Jira; Claude finds the likely cause using mapping files that reduce wrong answers; results show on an HTML dashboard.",
+        "result": "Auto-created Jira defects with logs attached. Shared with the IAM and Core QA teams, then deployed by the dev team.",
+        "tags": ["Python", "Claude API", "Jira API", "Jenkins", "Kubernetes"]
+      },
+      {
+        "title": "Chaos testing found a real reliability bug",
+        "problem": "Unknown how services behave when pods fail.",
+        "approach": "Ran Chaos Mesh pod-kill experiments independently.",
+        "result": "Found that pods lacked graceful shutdown, so in-flight API calls failed. Developers added graceful shutdown.",
+        "tags": ["Chaos Mesh", "Kubernetes", "Resiliency"]
+      }
+    ]
+  },
+  "skills": {
+    "heading": "Skills",
+    "groups": [
+      { "name": "Languages", "items": ["Python", "Java", "SQL"] },
+      { "name": "API Testing", "items": ["pytest", "Rest Assured", "Postman"] },
+      { "name": "Performance & Reliability", "items": ["k6", "JMeter", "Chaos Mesh"] },
+      { "name": "Security & Identity", "items": ["OIDC", "SAML", "JWT", "mTLS"] },
+      { "name": "CI/CD & DevOps", "items": ["Jenkins", "GitHub Actions", "Docker", "Kubernetes", "Git"] },
+      { "name": "Tools", "items": ["Jira", "qTest", "Bitbucket"] },
+      { "name": "AI in Testing", "items": ["Claude API", "Claude Code", "AI-assisted test optimization"] }
+    ],
+    "learning": { "name": "Currently learning", "items": ["Playwright", "Selenium", "AWS"] }
+  },
+  "projects": {
+    "heading": "Projects",
+    "subheading": "Public QA projects you can run yourself.",
+    "comingSoon": "QA projects coming soon on GitHub.",
+    "qa": [
+      {
+        "title": "API Automation Framework",
+        "description": "pytest framework for a booking API with [NUMBER] positive, negative and auth tests, JSON schema checks and HTML reports, running on every push via GitHub Actions.",
+        "tags": ["Python", "pytest", "requests", "GitHub Actions"],
+        "repo": "[REPO URL]",
+        "live": false
+      },
+      {
+        "title": "Performance Test Suite",
+        "description": "k6 load, stress and soak scenarios with pass/fail thresholds on latency and error rate, with results summarised in the README.",
+        "tags": ["k6", "Performance", "GitHub Actions"],
+        "repo": "[REPO URL]",
+        "live": false
+      },
+      {
+        "title": "UI Automation Suite",
+        "description": "Playwright tests for an e-commerce demo using Page Object Model, running in parallel in CI.",
+        "tags": ["Playwright", "POM", "GitHub Actions"],
+        "repo": "[REPO URL]",
+        "live": false
+      }
+    ],
+    "earlierHeading": "Earlier Projects",
+    "earlier": [
+      {
+        "title": "SightCall",
+        "description": "Real-time video calling app with WebRTC and Socket.IO.",
+        "tags": ["MERN", "WebRTC", "Socket.IO"],
+        "repo": "https://github.com/varshalearner/sight-call-frontend",
+        "demo": "[DEMO URL]",
+        "image": ""
+      },
+      {
+        "title": "Lung Cancer Analysis",
+        "description": "ML-based risk prediction with a Node.js backend API.",
+        "tags": ["MERN", "Python", "ML"],
+        "repo": "https://github.com/varshalearner/lungCancerAnalysis",
+        "demo": "[DEMO URL]",
+        "image": "/projects/lung-cancer-analysis.png"
+      },
+      {
+        "title": "Online Food Ordering",
+        "description": "MERN app with an admin panel and recommendations.",
+        "tags": ["MERN", "Tailwind CSS"],
+        "repo": "https://github.com/varshalearner/Smart-Restaurant",
+        "demo": "[DEMO URL]",
+        "image": "/projects/online-food-ordering.png"
+      }
+    ]
+  },
+  "blog": {
+    "heading": "Blog",
+    "subheading": "Notes on API testing, performance, reliability and using AI in QA.",
+    "homeHeading": "Latest Writing",
+    "viewAll": "View all posts →",
+    "authorLine": "Varsha Sharma is an SDET working on API, performance and resiliency test automation."
+  },
+  "contact": {
+    "heading": "Let's Talk",
+    "line": "I'm open to SDET and QA automation roles in NCR or remote. The fastest way to reach me is email."
+  },
+  "footer": {
+    "text": "© 2026 Varsha Sharma · Built with Next.js",
+    "source": "[GITHUB SOURCE URL]"
+  }
+}

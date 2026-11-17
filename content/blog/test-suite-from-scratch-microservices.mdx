@@ -1,0 +1,71 @@
+---
+title: "Building a Test Suite from Scratch for a New Microservice Platform"
+description: "How I planned and built ~190 tests across 5 services: smoke, functional, performance, longevity and chaos."
+date: "2026-12-11"
+tags: ["test-strategy", "pytest", "microservices", "framework-design"]
+draft: true
+---
+
+## Starting from zero
+
+I was given a new platform of 5 microservices with no automated tests. Before writing a single test, I planned the layers, because the order you build things in decides how quickly the suite becomes useful.
+
+## The layers
+
+| Layer | When it runs | Purpose |
+|---|---|---|
+| Smoke (20 tests, ~5 min) | Every merge | Is the build basically working? |
+| Functional | On demand, before release | Does each service do what it should, including negative cases? |
+| Data validation | With functional | Did the data actually land correctly in the data store? |
+| Performance (1 hour) | Before release | Is it fast enough at expected load? |
+| Longevity (72 hours) | Before major releases | Does it stay healthy over days? |
+| Resiliency (chaos) | Before major releases | Does it survive pod failures? |
+
+In total, the suite grew to around 190 tests across the 5 services, using pytest, k6 and Chaos Mesh.
+
+## Build smoke first
+
+Smoke tests give value on day one: every merge gets a 5-minute health check. Everything else can come later.
+
+## A simple framework structure
+
+```text
+tests/
+├── conftest.py          # shared fixtures: clients, auth, test data, cleanup
+├── smoke/
+├── functional/
+│   ├── service_a/
+│   └── service_b/
+├── data_validation/
+├── performance/         # k6 scripts
+└── resiliency/          # Chaos Mesh experiments
+utils/
+├── api_client.py        # one client per service, with retries and logging
+└── data_store.py        # helpers to query and verify stored records
+```
+
+Markers let one suite serve many purposes:
+
+```python
+import pytest
+
+
+@pytest.mark.smoke
+def test_service_health(api_client):
+    assert api_client.get("/health").status_code == 200
+```
+
+```bash
+pytest -m smoke     # every merge
+pytest              # full functional run
+```
+
+## Don't stop at the API response
+
+For data pipelines, a 200 response only means the request was accepted. I added tests that queried the data store afterwards to confirm the right records actually arrived. Several real issues only showed up at that step.
+
+## What I learned
+
+- **Plan layers before tests.** It's much easier than reorganizing 100 tests later.
+- **Smoke first, chaos last.** Earn trust with fast, stable tests before adding long-running ones.
+- **Shared fixtures save the most time.** Clients, auth and cleanup belong in one place.

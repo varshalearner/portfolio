@@ -1,0 +1,75 @@
+---
+title: "One k6 Script for Load and 72-Hour Longevity Tests"
+description: "How to reuse a single k6 script for smoke, 1-hour load and 72-hour longevity runs with environment profiles."
+date: "2026-11-27"
+tags: ["performance-testing", "k6", "longevity-testing"]
+draft: true
+---
+
+## Why one script
+
+I ran two kinds of performance tests on a microservice platform: a 1-hour performance test and a 72-hour longevity test. Keeping two copies of the same script means fixing every change twice. So I used one k6 script and switched the load profile with an environment variable.
+
+## Load vs longevity: what each one finds
+
+| Test | Duration | What it finds |
+|---|---|---|
+| Smoke | 1 minute | The script and environment work at all |
+| Load / performance | ~1 hour | Response times and error rate at expected traffic |
+| Longevity | 72 hours | Problems that only build up over time: memory growth, slow latency creep, connection or resource leaks |
+
+A service can pass a 1-hour test perfectly and still fall over on day 3. That's why longevity tests exist.
+
+## The script
+
+```javascript
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+const profiles = {
+  smoke: { vus: 2, duration: '1m' },
+  load: {
+    stages: [
+      { duration: '5m', target: 50 },
+      { duration: '50m', target: 50 },
+      { duration: '5m', target: 0 },
+    ],
+  },
+  longevity: {
+    stages: [
+      { duration: '10m', target: 20 },
+      { duration: '72h', target: 20 },
+      { duration: '10m', target: 0 },
+    ],
+  },
+};
+
+export const options = {
+  ...profiles[__ENV.PROFILE || 'smoke'],
+  thresholds: {
+    http_req_failed: ['rate<0.01'],   // under 1% errors
+    http_req_duration: ['p(95)<500'], // 95% of requests under 500 ms
+  },
+};
+
+export default function () {
+  const res = http.get('https://test-api.k6.io/public/crocodiles/');
+  check(res, { 'status is 200': (r) => r.status === 200 });
+  sleep(1);
+}
+```
+
+Run it with:
+
+```bash
+k6 run -e PROFILE=smoke script.js
+k6 run -e PROFILE=load script.js
+k6 run -e PROFILE=longevity script.js
+```
+
+## Tips
+
+- **Always run smoke first.** Don't find out about a typo 20 hours into a 72-hour run.
+- **Thresholds make results pass or fail.** Without them, a performance test is just a graph someone has to interpret.
+- **For longevity, watch trends, not averages.** A p95 that slowly climbs from 200 ms to 450 ms over 3 days is a warning, even though it never crosses the threshold.
+- **Watch the servers too.** Pair k6 results with pod memory and CPU graphs; leaks show up there first.
